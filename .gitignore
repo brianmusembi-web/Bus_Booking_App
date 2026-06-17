@@ -41,3 +41,26 @@ app-example
 # generated native folders
 /ios
 /android
+# Expo
+.expo/
+.expo-shared/
+
+# Temporary files
+~$*
+*.tmp
+*.temp
+
+# AI configs
+AGENTS.md
+CLAUDE.md
+
+# Node
+node_modules/
+npm-debug.*
+*.log
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
