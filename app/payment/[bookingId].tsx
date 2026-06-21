@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -8,41 +8,36 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Booking } from '../../types';
+import { useBooking } from '../../context/BookingContext';
+import { sendBookingConfirmation } from '../../services/notifications';
 
 export default function PaymentScreen() {
   const router = useRouter();
   const { bookingId, booking } = useLocalSearchParams();
   const bookingData: Booking = JSON.parse(booking as string);
+  const { addBooking } = useBooking();
   const [loading, setLoading] = useState(false);
   const [selectedMethod, setSelectedMethod] = useState<'card' | 'mpesa' | 'cash'>('mpesa');
 
   const handlePayment = async () => {
     setLoading(true);
     
-    // Simulate payment processing
     setTimeout(async () => {
       try {
-        // Update booking status
         const updatedBooking = {
           ...bookingData,
-          status: 'confirmed',
-          paymentStatus: 'paid',
+          status: 'confirmed' as const,
+          paymentStatus: 'paid' as const,
         };
         
-        await AsyncStorage.setItem(`booking_${bookingData.id}`, JSON.stringify(updatedBooking));
-        
-        // Save to bookings list
-        const existingBookings = await AsyncStorage.getItem('bookings');
-        const bookings = existingBookings ? JSON.parse(existingBookings) : [];
-        bookings.push(updatedBooking);
-        await AsyncStorage.setItem('bookings', JSON.stringify(bookings));
+        await addBooking(updatedBooking);
+        await sendBookingConfirmation(updatedBooking.id, updatedBooking);
         
         setLoading(false);
         
         Alert.alert(
-          'Payment Successful',
+          'Payment Successful 🎉',
           `Your booking has been confirmed! Booking ID: ${bookingData.id}`,
           [
             {

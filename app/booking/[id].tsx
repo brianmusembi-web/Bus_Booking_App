@@ -9,13 +9,15 @@ import {
   Alert,
 } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Trip, PassengerDetails, Booking } from '../../types';
+import { useBooking } from '../../context/BookingContext';
+import { sendBookingConfirmation } from '../../services/notifications';
 
 export default function BookingScreen() {
   const router = useRouter();
   const { id, trip } = useLocalSearchParams();
   const tripData: Trip = JSON.parse(trip as string);
+  const { addBooking } = useBooking();
   
   const [selectedSeats, setSelectedSeats] = useState<number[]>([]);
   const [passengerDetails, setPassengerDetails] = useState<PassengerDetails>({
@@ -79,7 +81,11 @@ export default function BookingScreen() {
     };
 
     try {
-      await AsyncStorage.setItem(`booking_${booking.id}`, JSON.stringify(booking));
+      await addBooking(booking);
+      
+      // Send notification
+      await sendBookingConfirmation(booking.id, booking);
+      
       router.push({
         pathname: '/payment/[bookingId]',
         params: { bookingId: booking.id, booking: JSON.stringify(booking) },

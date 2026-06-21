@@ -8,8 +8,10 @@ import {
   Alert,
   ScrollView,
 } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { User } from '../../types';
+import { ProfilePicture } from '../../components/ProfilePicture';
+import { saveUserSecure, getUserSecure, deleteUserSecure } from '../../services/auth';
+import { exportData, clearAllData } from '../../utils/storage';
 
 export default function ProfileScreen() {
   const [user, setUser] = useState<User>({
@@ -19,6 +21,7 @@ export default function ProfileScreen() {
     phone: '',
   });
   const [isEditing, setIsEditing] = useState(false);
+  const [profileImage, setProfileImage] = useState<string | undefined>();
 
   useEffect(() => {
     loadUserProfile();
@@ -26,9 +29,9 @@ export default function ProfileScreen() {
 
   const loadUserProfile = async () => {
     try {
-      const storedUser = await AsyncStorage.getItem('userProfile');
+      const storedUser = await getUserSecure();
       if (storedUser) {
-        setUser(JSON.parse(storedUser));
+        setUser(storedUser);
       }
     } catch (error) {
       console.error('Failed to load user profile', error);
@@ -42,12 +45,43 @@ export default function ProfileScreen() {
     }
 
     try {
-      await AsyncStorage.setItem('userProfile', JSON.stringify(user));
-      setIsEditing(false);
-      Alert.alert('Success', 'Profile updated successfully');
+      const success = await saveUserSecure(user);
+      if (success) {
+        setIsEditing(false);
+        Alert.alert('Success', 'Profile updated successfully');
+      }
     } catch (error) {
       Alert.alert('Error', 'Failed to save profile');
     }
+  };
+
+  const handleExportData = async () => {
+    const data = await exportData();
+    if (data) {
+      Alert.alert('Data Export', 'Data exported successfully! Check console for data.');
+      console.log('Exported Data:', data);
+    }
+  };
+
+  const handleClearData = async () => {
+    Alert.alert(
+      'Clear All Data',
+      'This will delete all your bookings and profile data. Are you sure?',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Clear',
+          style: 'destructive',
+          onPress: async () => {
+            const success = await clearAllData();
+            if (success) {
+              Alert.alert('Success', 'All data cleared');
+              setUser({ id: '1', name: '', email: '', phone: '' });
+            }
+          },
+        },
+      ]
+    );
   };
 
   const StatCard = ({ label, value, icon }: { label: string; value: string; icon: string }) => (
@@ -64,6 +98,11 @@ export default function ProfileScreen() {
         <Text style={styles.title}>Profile</Text>
         <Text style={styles.subtitle}>Manage your account</Text>
       </View>
+
+      <ProfilePicture
+        imageUri={profileImage}
+        onImageChange={setProfileImage}
+      />
 
       <View style={styles.statsContainer}>
         <StatCard label="Total Trips" value="0" icon="✈️" />
@@ -122,14 +161,19 @@ export default function ProfileScreen() {
       </View>
 
       <View style={styles.menuSection}>
-        <TouchableOpacity style={styles.menuItem}>
-          <Text style={styles.menuIcon}>🔔</Text>
-          <Text style={styles.menuText}>Notifications</Text>
+        <TouchableOpacity style={styles.menuItem} onPress={handleExportData}>
+          <Text style={styles.menuIcon}>📤</Text>
+          <Text style={styles.menuText}>Export Data</Text>
+          <Text style={styles.menuArrow}>›</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.menuItem} onPress={handleClearData}>
+          <Text style={styles.menuIcon}>🗑️</Text>
+          <Text style={styles.menuText}>Clear All Data</Text>
           <Text style={styles.menuArrow}>›</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.menuItem}>
-          <Text style={styles.menuIcon}>🎫</Text>
-          <Text style={styles.menuText}>Promotions</Text>
+          <Text style={styles.menuIcon}>🔔</Text>
+          <Text style={styles.menuText}>Notifications</Text>
           <Text style={styles.menuArrow}>›</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.menuItem}>

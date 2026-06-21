@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -7,33 +7,18 @@ import {
   TouchableOpacity,
   Alert,
 } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Booking, Trip } from '../../types';
+import { useBooking } from '../../context/BookingContext';
 import { trips } from '../../constants/data';
+import { Trip } from '../../types';
 
 export default function BookingsScreen() {
-  const [bookings, setBookings] = useState<Booking[]>([]);
-
-  useEffect(() => {
-    loadBookings();
-  }, []);
-
-  const loadBookings = async () => {
-    try {
-      const storedBookings = await AsyncStorage.getItem('bookings');
-      if (storedBookings) {
-        setBookings(JSON.parse(storedBookings));
-      }
-    } catch (error) {
-      console.error('Failed to load bookings', error);
-    }
-  };
+  const { bookings, cancelBooking, loading } = useBooking();
 
   const getTripDetails = (tripId: string): Trip | undefined => {
     return trips.find((trip) => trip.id === tripId);
   };
 
-  const cancelBooking = async (bookingId: string) => {
+  const handleCancelBooking = (bookingId: string) => {
     Alert.alert(
       'Cancel Booking',
       'Are you sure you want to cancel this booking?',
@@ -42,12 +27,7 @@ export default function BookingsScreen() {
         {
           text: 'Yes',
           style: 'destructive',
-          onPress: async () => {
-            const updatedBookings = bookings.filter((b) => b.id !== bookingId);
-            await AsyncStorage.setItem('bookings', JSON.stringify(updatedBookings));
-            setBookings(updatedBookings);
-            Alert.alert('Success', 'Booking cancelled successfully');
-          },
+          onPress: () => cancelBooking(bookingId),
         },
       ]
     );
@@ -68,7 +48,7 @@ export default function BookingsScreen() {
     }
   };
 
-  const renderBooking = ({ item }: { item: Booking }) => {
+  const renderBooking = ({ item }: { item: any }) => {
     const trip = getTripDetails(item.tripId);
     if (!trip) return null;
 
@@ -111,7 +91,7 @@ export default function BookingsScreen() {
         {item.status === 'confirmed' && (
           <TouchableOpacity
             style={styles.cancelButton}
-            onPress={() => cancelBooking(item.id)}
+            onPress={() => handleCancelBooking(item.id)}
           >
             <Text style={styles.cancelButtonText}>Cancel Booking</Text>
           </TouchableOpacity>
@@ -119,6 +99,14 @@ export default function BookingsScreen() {
       </View>
     );
   };
+
+  if (loading) {
+    return (
+      <View style={styles.container}>
+        <Text style={styles.loadingText}>Loading bookings...</Text>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
@@ -266,5 +254,11 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#999',
     textAlign: 'center',
+  },
+  loadingText: {
+    fontSize: 16,
+    color: '#666',
+    textAlign: 'center',
+    marginTop: 40,
   },
 });

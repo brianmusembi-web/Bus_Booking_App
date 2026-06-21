@@ -1,12 +1,12 @@
 import { Tabs } from 'expo-router';
-import { Ionicons } from '@expo/vector-icons';  // ✅ Fixed: was "Ionics"
+import { Ionicons } from '@expo/vector-icons';
 
 export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: '#2ecc71',  // ✅ Fixed: was '#f2ec71'
+        tabBarActiveTintColor: '#2ecc71',
         tabBarInactiveTintColor: '#999',
         tabBarStyle: {
           backgroundColor: 'white',
@@ -26,7 +26,7 @@ export default function TabLayout() {
         name="index"
         options={{
           title: 'Home',
-          tabBarIcon: ({ color, size }) => (  // ✅ Fixed: added curly braces
+          tabBarIcon: ({ color, size }) => (
             <Ionicons name="home" size={size} color={color} />
           ),
         }}
@@ -35,7 +35,7 @@ export default function TabLayout() {
         name="bookings"
         options={{
           title: 'Bookings',
-          tabBarIcon: ({ color, size }) => (  // ✅ Fixed: added curly braces
+          tabBarIcon: ({ color, size }) => (
             <Ionicons name="calendar" size={size} color={color} />
           ),
         }}
@@ -44,7 +44,7 @@ export default function TabLayout() {
         name="profile"
         options={{
           title: 'Profile',
-          tabBarIcon: ({ color, size }) => (  // ✅ Fixed: added curly braces
+          tabBarIcon: ({ color, size }) => (
             <Ionicons name="person" size={size} color={color} />
           ),
         }}

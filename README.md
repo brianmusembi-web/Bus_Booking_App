@@ -1,50 +1,40 @@
-# Welcome to your Expo app 👋
+# 🚌 Bus Booking App
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+## 📱 About
 
-## Get started
+A modern mobile application for booking bus tickets across Kenya. Browse trips, select seats, and pay with M-Pesa, Card, or Cash - all from your phone.
 
-1. Install dependencies
+## ✨ Features
 
+- Browse trips across 7 destinations
+- Choose from 5 bus types (Scania, Yutong, MAN, Zhongtong, Isuzu)
+- Interactive seat selection (up to 4 seats)
+- Multiple payment options (M-Pesa, Card, Cash)
+- View and manage your bookings
+- User profile management with photo upload
+- Push notifications for booking confirmations
+- Secure data storage
+- Data export/import functionality
+
+## 🛠️ Tech Stack
+
+- React Native with Expo
+- TypeScript
+- Context API for state management
+- AsyncStorage & SecureStore for data persistence
+- Expo Router for navigation
+- Jest for testing
+
+## 🚀 Quick Start
+
+### Prerequisites
+- Node.js (LTS version)
+- npm or yarn
+- Expo Go app (for mobile testing)
+
+### Installation
+
+1. Clone the repository
    ```bash
-   npm install
-   ```
-
-2. Start the app
-
-   ```bash
-   npx expo start
-   ```
-
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
-```
-
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
-
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+   git clone https://github.com/brianmusembi-web/Bus_Booking_App.git
+   cd Bus_Booking_App
